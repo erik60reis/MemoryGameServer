@@ -1,4 +1,3 @@
-const e = require('express');
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -123,6 +122,17 @@ io.on('connection', (socket) => {
     }catch(err){console.log(err);}});
 
     socket.on('joinRoom', (roomId) => {try{
+        if (roomId === 'randomRoom') {
+            let possibleRoomIds = [];
+            for (const tempRoomId in usedRoomIds) {
+                if (Object.keys(usedRoomIds[tempRoomId.toString()].players).length <= 3) {
+                    possibleRoomIds.push(tempRoomId.toString());
+                }
+            }
+            if (possibleRoomIds.length > 0) {
+                roomId = possibleRoomIds[Math.floor(Math.random() * possibleRoomIds.length)];
+            }
+        }
         if (!usedRoomIds[roomId]) {
             socket.emit('roomNotFound', roomId.toString());
             return;
@@ -145,7 +155,6 @@ io.on('connection', (socket) => {
     }catch(err){console.log(err);}});
 
     socket.on('disconnect', () => {try{
-
             console.log(`Client disconnected: ${socket.id}`);
             delete universalPlayerInfo[socket.id];
             for (const roomId in usedRoomIds) {
@@ -165,6 +174,7 @@ io.on('connection', (socket) => {
         let roomId = getRoomIdBySocketId(socket.id);
         if (!roomId) return;
         if (usedRoomIds[roomId].isInCardAnimation) return;
+        if (cardindex < 0 || cardindex >= usedRoomIds[roomId].board.length) return;
         if (Object.keys(usedRoomIds[roomId].players).indexOf(socket.id) !== usedRoomIds[roomId].turn) return;
         if (usedRoomIds[roomId].choosedCardIndex === -1) {
             usedRoomIds[roomId].isInCardAnimation = true;
@@ -217,4 +227,6 @@ io.on('connection', (socket) => {
 const PORT = 3000;
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
+
+  //require('./bots')();
 });
