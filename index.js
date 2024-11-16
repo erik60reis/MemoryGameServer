@@ -214,6 +214,7 @@ io.on('connection', (socket) => {
                     }
                     for (const playerSocketId in usedRoomIds[roomId].players) {
                         universalPlayerInfo[playerSocketId].socket.emit('updateTurnIndex', usedRoomIds[roomId].turn.toString());
+                        universalPlayerInfo[playerSocketId].socket.emit('updatePlayerList', Object.values(JSON.stringify(removeSocketKeys(usedRoomIds[roomId].players))));
                     }
                     usedRoomIds[roomId].isInCardAnimation = false;
                     usedRoomIds[roomId].choosedCardIndex = -1;
