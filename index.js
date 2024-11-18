@@ -185,7 +185,7 @@ io.on('connection', (socket) => {
             setTimeout(() => {
                 usedRoomIds[roomId].isInCardAnimation = false;
             }, 1000);
-        } else if (cardindex != choosedCardIndex) {
+        } else if (cardindex != usedRoomIds[roomId].choosedCardIndex) {
             usedRoomIds[roomId].isInCardAnimation = true;
             for (const playerSocketId in usedRoomIds[roomId].players) {
                 universalPlayerInfo[playerSocketId].socket.emit('flipCardUp', JSON.stringify({cardIndex: cardindex, symbol: usedRoomIds[roomId].board[cardindex]}));
