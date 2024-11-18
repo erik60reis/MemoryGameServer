@@ -155,18 +155,22 @@ io.on('connection', (socket) => {
     }catch(err){console.log(err);}});
 
     socket.on('disconnect', () => {try{
-            console.log(`Client disconnected: ${socket.id}`);
-            delete universalPlayerInfo[socket.id];
-            for (const roomId in usedRoomIds) {
-                const index = Object.keys(usedRoomIds[roomId].players).indexOf(socket.id);
-                if (index !== -1) {
-                    delete usedRoomIds[roomId].players[socket.id];
-                    for (const playerSocketId in usedRoomIds[roomId].players) {
-                        universalPlayerInfo[playerSocketId].socket.emit('updatePlayerList', JSON.stringify({players: Object.values(removeSocketKeys(usedRoomIds[roomId].players))}));
-                    }
-                    break;
+        console.log(`Client disconnected: ${socket.id}`);
+        delete universalPlayerInfo[socket.id];
+        for (const roomId in usedRoomIds) {
+            const index = Object.keys(usedRoomIds[roomId].players).indexOf(socket.id);
+            if (index !== -1) {
+                delete usedRoomIds[roomId].players[socket.id];
+                if (usedRoomIds[roomId].turn >= Object.keys(usedRoomIds[roomId].players).length) {
+                    usedRoomIds[roomId].turn = 0;
                 }
+                for (const playerSocketId in usedRoomIds[roomId].players) {
+                    universalPlayerInfo[playerSocketId].socket.emit('updateTurnIndex', usedRoomIds[roomId].turn.toString());
+                    universalPlayerInfo[playerSocketId].socket.emit('updatePlayerList', JSON.stringify({players: Object.values(removeSocketKeys(usedRoomIds[roomId].players))}));
+                }
+                break;
             }
+        }
     }catch(err){console.log(err);}});
 
     socket.on('chooseCard', (cardindex) => {try{
