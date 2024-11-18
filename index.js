@@ -162,7 +162,7 @@ io.on('connection', (socket) => {
                 if (index !== -1) {
                     delete usedRoomIds[roomId].players[socket.id];
                     for (const playerSocketId in usedRoomIds[roomId].players) {
-                        universalPlayerInfo[playerSocketId].socket.emit('updatePlayerList', Object.values(JSON.stringify(removeSocketKeys(usedRoomIds[roomId].players))));
+                        universalPlayerInfo[playerSocketId].socket.emit('updatePlayerList', JSON.stringify({players: Object.values(removeSocketKeys(usedRoomIds[roomId].players))}));
                     }
                     break;
                 }
@@ -185,7 +185,7 @@ io.on('connection', (socket) => {
             setTimeout(() => {
                 usedRoomIds[roomId].isInCardAnimation = false;
             }, 1000);
-        } else {
+        } else if (cardindex != choosedCardIndex) {
             usedRoomIds[roomId].isInCardAnimation = true;
             for (const playerSocketId in usedRoomIds[roomId].players) {
                 universalPlayerInfo[playerSocketId].socket.emit('flipCardUp', JSON.stringify({cardIndex: cardindex, symbol: usedRoomIds[roomId].board[cardindex]}));
@@ -199,6 +199,7 @@ io.on('connection', (socket) => {
                         universalPlayerInfo[playerSocketId].socket.emit('removeCard', usedRoomIds[roomId].choosedCardIndex.toString());
                     }
                     switchTurn = false;
+                    usedRoomIds[roomId].players[socket.id].score++;
                 }else {
                     for (const playerSocketId in usedRoomIds[roomId].players) {
                         universalPlayerInfo[playerSocketId].socket.emit('flipCardDown', cardindex.toString());
@@ -214,7 +215,7 @@ io.on('connection', (socket) => {
                     }
                     for (const playerSocketId in usedRoomIds[roomId].players) {
                         universalPlayerInfo[playerSocketId].socket.emit('updateTurnIndex', usedRoomIds[roomId].turn.toString());
-                        universalPlayerInfo[playerSocketId].socket.emit('updatePlayerList', Object.values(JSON.stringify(removeSocketKeys(usedRoomIds[roomId].players))));
+                        universalPlayerInfo[playerSocketId].socket.emit('updatePlayerList', JSON.stringify({players: Object.values(removeSocketKeys(usedRoomIds[roomId].players))}));
                     }
                     usedRoomIds[roomId].isInCardAnimation = false;
                     usedRoomIds[roomId].choosedCardIndex = -1;
