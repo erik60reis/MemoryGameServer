@@ -9,8 +9,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "express": "^4.21.1",
-    "socket.io": "^4.0.0",
-    "socket.io-client": "^4.8.1"
+    "@colyseus/schema": "^3.0.70",
+    "@colyseus/ws-transport": "^0.16.5",
+    "colyseus": "^0.16.5",
+    "express": "^5.1.0"
   }
 }
